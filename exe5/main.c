@@ -26,7 +26,7 @@ const int LED_PIN_Y = 10;
 QueueHandle_t xQueueButId;
 QueueHandle_t xQueueBut2Id;
 SemaphoreHandle_t xSemaphore_r;
-SemaphoreHandle_t xSemaphore_g;
+SemaphoreHandle_t xSemaphore_y;
 
 
 void btn_callback(uint gpio, uint32_t events) {
@@ -34,7 +34,7 @@ void btn_callback(uint gpio, uint32_t events) {
         if (gpio == BTN_PIN_R)
             xSemaphoreGiveFromISR(xSemaphore_r, 0);
         else if (gpio == BTN_PIN_Y)
-            xSemaphoreGiveFromISR(xSemaphore_g, 0);
+            xSemaphoreGiveFromISR(xSemaphore_y, 0);
     }
 }
 
@@ -111,7 +111,7 @@ void btn_2_task(void *p) {
 
     int delay = 0;
     while (true) {
-        if (xSemaphoreTake(xSemaphore_g, pdMS_TO_TICKS(500)) == pdTRUE) {
+        if (xSemaphoreTake(xSemaphore_y, pdMS_TO_TICKS(500)) == pdTRUE) {
             if (delay == 100) {
                 delay = 0;
             } else {
@@ -130,7 +130,7 @@ int main() {
     xQueueButId = xQueueCreate(32, sizeof(int));
     xQueueBut2Id = xQueueCreate(32, sizeof(int));
     xSemaphore_r = xSemaphoreCreateBinary();
-    xSemaphore_g = xSemaphoreCreateBinary();
+    xSemaphore_y = xSemaphoreCreateBinary();
 
     xTaskCreate(led_1_task, "LED_Task 1", 256, NULL, 1, NULL);
     xTaskCreate(btn_1_task, "BTN_Task 1", 256, NULL, 1, NULL);
